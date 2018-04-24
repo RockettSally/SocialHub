@@ -89,13 +89,19 @@ export class HomePage {
     }
   }
 
-  setSubCategory(){
-
+  setSubCategory(subCategory){
+    this.chosenCategory = subCategory;
+    localStorage.setItem('chosenSubCategory',this.chosenCategory);
+    this.getRedditPosts();
   }
 
   getRedditPosts(){
     if(this.chosenCategory || this.chosenSubCategory){
-      
+      this.redditService.getPosts(this.chosenSubCategory,15).then((result: any) =>{
+        console.log(result);
+      }, (err) =>{
+        console.log(err);
+      });
     }
   }
 

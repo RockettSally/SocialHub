@@ -2,23 +2,24 @@ import { Injectable } from '@angular/core';
 import { ToastController } from 'ionic-angular';
 
 @Injectable()
-export class Loader {
+export class Toast {
 
     loader: any = null;
 
     constructor(private toastCtrl: ToastController) {
     }
 
-    // private showLoadingHandler(message) {
-    //     if (this.loader == null) {
-    //         this.loader = this.loadingCtrl.create({
-    //             content: message
-    //         });
-    //         this.loader.present();
-    //     } else {
-    //         this.loader.data.content = message;
-    //     }
-    // }
+    private presentToast(toastMsg, toastPosition) {
+        let toast = this.toastCtrl.create({
+            message: toastMsg,
+            duration: 4000,
+            position: toastPosition,
+            showCloseButton: true,
+            
+        });
+        
+        toast.present();
+    }
     
     // private hideLoadingHandler() {
     //     if (this.loader != null) {
