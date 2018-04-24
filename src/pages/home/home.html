@@ -1,18 +1,23 @@
 <ion-header>
-  <ion-navbar>
+  <ion-navbar color="primary">
     <button ion-button menuToggle>
       <ion-icon name="menu"></ion-icon>
     </button>
-    <ion-title>Home</ion-title>
+    <ion-title>Reddit</ion-title>
   </ion-navbar>
 </ion-header>
 
-<ion-content padding>
-  <h3>Ionic Menu Starter</h3>
-
-  <p>
-    If you get lost, the <a href="http://ionicframework.com/docs/v2">docs</a> will show you the way.
-  </p>
-
-  <button ion-button secondary menuToggle>Toggle Menu</button>
+<ion-content>
+<ion-item padding-horizontal>
+  <ion-label floating>Category</ion-label>
+  <ion-select (ionChange)="getSubCategories($event)" [ngModel]="chosenCategory" name="chosenCategory">
+    <ion-option *ngFor="let category of categories" value="{{category.value}}">{{category.name}}</ion-option>
+  </ion-select>
+</ion-item>
+<ion-item padding-horizontal *ngIf="chosenCategory">
+  <ion-label floating>Sub Category</ion-label>
+  <ion-select (ionChange)="setSubCategory($event)" [ngModel]="chosenSubCategory" name="chosenSubCategory">
+    <ion-option *ngFor="let subCategory of subcategories" value="{{subCategory.value}}">{{subCategory.name}}</ion-option>
+  </ion-select>
+</ion-item>
 </ion-content>
