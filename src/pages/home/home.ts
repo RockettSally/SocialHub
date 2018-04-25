@@ -1,6 +1,8 @@
+import { Toast } from './../../utils/toast';
 import { Component } from '@angular/core';
 import { NavController } from 'ionic-angular';
 import { RedditServiceProvider } from './../../providers/reddit-service/reddit-service';
+import { RedditPostDetailPage } from '../reddit-post-detail/reddit-post-detail';
 
 @Component({
   selector: 'page-home',
@@ -10,13 +12,14 @@ import { RedditServiceProvider } from './../../providers/reddit-service/reddit-s
 export class HomePage {
 
   posts: any = [];
+  afterId: string = '';
   categories: Array<{value: string, name: string}> = [];
   chosenCategory: string = null;
   subcategories: Array<{value: string, name: string}> = [];
   chosenSubCategory: string = null;
-  limit: Array<{value: string, name: string}> = [];
+  loadingPosts: boolean;
 
-  constructor(public navCtrl: NavController, public redditService: RedditServiceProvider) {
+  constructor(public navCtrl: NavController, public redditService: RedditServiceProvider, public toast: Toast) {
     this.chosenCategory = localStorage.getItem('chosenCategory');
     this.getCategories();
     if(this.chosenCategory){
@@ -24,7 +27,7 @@ export class HomePage {
     }
     this.chosenSubCategory = localStorage.getItem('chosenSubCategory');
     if(this.chosenSubCategory){
-      this.getRedditPosts();
+      this.getRedditPosts(false);
     }
   }
 
@@ -39,14 +42,20 @@ export class HomePage {
     this.categories.push({value: 'misc', name: 'Misc'});
   }
 
-  getSubCategories(category){
-    this.subcategories = [];
+  switchCategory(category){
+    this.posts = [];
+    this.chosenSubCategory = null;
     this.chosenCategory = category;
     localStorage.setItem('chosenCategory',this.chosenCategory);
-    this.chosenSubCategory = null;
     if(localStorage.getItem('chosenSubCategory')){
       localStorage.removeItem('chosenSubCategory');
     }
+    this.getSubCategories(category);
+  }
+
+  getSubCategories(category){
+    this.chosenSubCategory = null;
+    this.subcategories.length = 0;
 
     switch(category){
       case 'games':
@@ -90,19 +99,38 @@ export class HomePage {
   }
 
   setSubCategory(subCategory){
-    this.chosenCategory = subCategory;
-    localStorage.setItem('chosenSubCategory',this.chosenCategory);
-    this.getRedditPosts();
+    if(subCategory && subCategory !== []){
+      this.chosenSubCategory = subCategory;
+      localStorage.setItem('chosenSubCategory',this.chosenSubCategory);
+      this.getRedditPosts(false);
+    }
   }
 
-  getRedditPosts(){
-    if(this.chosenCategory || this.chosenSubCategory){
-      this.redditService.getPosts(this.chosenSubCategory,15).then((result: any) =>{
-        console.log(result);
+  getRedditPosts(isMore: boolean){
+    this.loadingPosts = true;
+    // let after;
+    // console.log(isMore);
+    // if(isMore){
+    //   after = this.afterId;
+    // }
+    if(this.chosenCategory && this.chosenSubCategory){
+      this.redditService.getPosts(this.chosenSubCategory, 100).then((result: any) =>{
+        this.loadingPosts = false;
+        this.toast.showQuickToast('Posts Loaded');
+        this.posts = result.data.children;
+        this.afterId = result.data.after;
+        console.log(this.afterId);
+        console.log(this.posts);
       }, (err) =>{
+        this.loadingPosts = false;
         console.log(err);
       });
     }
   }
 
+  viewItem(item){
+    this.navCtrl.push(RedditPostDetailPage, {
+      item:item
+    });
+  }
 }

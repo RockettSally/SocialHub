@@ -1,23 +1,44 @@
 <ion-header>
   <ion-navbar color="primary">
-    <button ion-button menuToggle>
+    <!-- <button ion-button menuToggle>
       <ion-icon name="menu"></ion-icon>
-    </button>
+    </button> -->
     <ion-title>Reddit</ion-title>
   </ion-navbar>
 </ion-header>
 
 <ion-content>
-<ion-item padding-horizontal>
-  <ion-label floating>Category</ion-label>
-  <ion-select (ionChange)="getSubCategories($event)" [ngModel]="chosenCategory" name="chosenCategory">
-    <ion-option *ngFor="let category of categories" value="{{category.value}}">{{category.name}}</ion-option>
-  </ion-select>
-</ion-item>
-<ion-item padding-horizontal *ngIf="chosenCategory">
-  <ion-label floating>Sub Category</ion-label>
-  <ion-select (ionChange)="setSubCategory($event)" [ngModel]="chosenSubCategory" name="chosenSubCategory">
-    <ion-option *ngFor="let subCategory of subcategories" value="{{subCategory.value}}">{{subCategory.name}}</ion-option>
-  </ion-select>
-</ion-item>
+    <ion-item padding-horizontal>
+      <ion-label floating>Category</ion-label>
+      <ion-select (ionChange)="switchCategory($event)" [ngModel]="chosenCategory" name="chosenCategory">
+        <ion-option *ngFor="let category of categories" value="{{category.value}}">{{category.name}}</ion-option>
+      </ion-select>
+    </ion-item>
+    <ion-item padding-horizontal *ngIf="chosenCategory">
+      <ion-label floating>Sub Category</ion-label>
+      <ion-select (ionChange)="setSubCategory($event)" [ngModel]="chosenSubCategory" name="chosenSubCategory">
+        <ion-option *ngFor="let subCategory of subcategories" value="{{subCategory.value}}">{{subCategory.name}}</ion-option>
+      </ion-select>
+    </ion-item>
+    <ion-item no-padding *ngIf="loadingPosts" text-center>
+        <ion-spinner *ngIf="loadingPosts"></ion-spinner>
+    </ion-item>
+    <ion-item *ngIf="posts.length > 0" padding-horizontal>
+        <small>Showing {{posts.length}} posts.</small>
+    </ion-item>
+    <ion-list [virtualScroll]="posts" approxItemHeight="275px">
+     <ion-item *virtualItem="let item" padding-horizontal item-height="275px" (click)="viewItem(item.data)">
+          <ion-thumbnail *ngIf="item.data.thumbnail && item.data.thumbnail !== 'self' && item.data.thumbnail !== 'default' && !item.data.spoiler && item.data.thumbnail != 'nsfw'" item-left>
+              <img src="{{item.data.thumbnail}}">
+          </ion-thumbnail>
+          <h2>{{item.data.title}}</h2>
+            <p>
+              <ion-badge color="dark" *ngIf="item.data.thumbnail == 'nsfw'">NSFW</ion-badge>
+              <ion-badge color="danger" *ngIf="item.data.spoiler">Spoiler</ion-badge>
+              <ion-badge><ion-icon name="thumbs-up"></ion-icon> &nbsp;{{item.data.score}}</ion-badge>
+              <ion-badge color="secondary"><ion-icon name="chatboxes"></ion-icon> &nbsp;{{item.data.num_comments}}</ion-badge>
+            </p>
+          <button ion-button outline item-right><ion-icon name="arrow-forward"></ion-icon></button>
+      </ion-item>
+    </ion-list>
 </ion-content>

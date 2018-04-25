@@ -17,8 +17,14 @@ export class RedditServiceProvider {
   }
 
   getPosts(category, limit){
+    let after: string = '';
+    
+    // if(afterId != null || afterId != ''){
+    //   after = '&after='+afterId;
+    // }
+
     return new Promise((resolve, reject) =>{ 
-			this.http.get(this.endpoint+'/'+category+'/top.json?limit='+limit).subscribe(res =>{
+			this.http.get(this.endpoint+'/'+category+'/top.json?limit='+limit+after).subscribe(res =>{
 					// console.log(JSON.stringify(res));
 					resolve(res);
 				}, (err) =>{

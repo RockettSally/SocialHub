@@ -9,36 +9,31 @@ export class Toast {
     constructor(private toastCtrl: ToastController) {
     }
 
-    private presentToast(toastMsg, toastPosition) {
+    private presentToast(toastMsg, toastPosition, toastTime, toastDismiss) {
         let toast = this.toastCtrl.create({
             message: toastMsg,
-            duration: 4000,
+            duration: toastTime,
             position: toastPosition,
-            showCloseButton: true,
+            showCloseButton: toastDismiss,
+            closeButtonText: 'X'
             
         });
-        
         toast.present();
     }
     
-    // private hideLoadingHandler() {
-    //     if (this.loader != null) {
-    //         this.loader.dismiss();
-    //         this.loader = null;
-    //     }
-    // }
+    public showPromptToast(message) {
+        this.presentToast(message, 'bottom', 5000, true);
+    }
     
-    // public showStandardLoader() {
-    //     let message = "Por favor aguarde...";
-    //     this.showLoadingHandler(message);
-    // }
-
-    // public showLoader(message) {
-    //     this.showLoadingHandler(message);
-    // }
-
-    // public hideLoader() {
-    //     this.hideLoadingHandler();
-    // }
-
+    public showQuickToast(message) {
+        this.presentToast(message, 'bottom', 1500, false);
+    }
+    
+    public showMiddleToast(message) {
+        this.presentToast(message, 'middle', 2000, false);
+    }
+    
+    public showTopToast(message) {
+        this.presentToast(message, 'top', 2000, false);
+    }
 }
